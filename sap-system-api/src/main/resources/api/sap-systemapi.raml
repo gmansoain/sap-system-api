@@ -1,0 +1,104 @@
+#%RAML 1.0
+title: SAP System API
+version: v1
+
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+      client_secret:
+        type: string
+    responses:
+      401:
+        description: Unauthorized or invalid client application credentials
+      500:
+        description: Bad response from authorization server, or WSDL SOAP Fault error
+
+
+/orders:
+  is: [client-id-required]
+  get:
+    description: Retrieve a list of orders
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "order_id": 1,
+                  "customer_id": 101,
+                  "order_date": "2023-08-01",
+                  "total_amount": 49.98,
+                  "status": "Pending"
+                },
+                {
+                  "order_id": 2,
+                  "customer_id": 102,
+                  "order_date": "2023-08-02",
+                  "total_amount": 29.99,
+                  "status": "Shipped"
+                }
+              ]
+
+  post:
+    description: Create a new order
+    body:
+      application/json:
+        example: |
+          {
+            "customer_id": 103,
+            "order_date": "2023-08-03",
+            "total_amount": 39.98,
+            "status": "Pending"
+          }
+    responses:
+      201:
+        description: Order created successfully
+      400:
+        description: Bad request
+
+/orders/{order_id}:
+  is: [client-id-required]
+  get:
+    description: Retrieve details of a specific order
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "order_id": 1,
+                "customer_id": 101,
+                "order_date": "2023-08-01",
+                "total_amount": 49.98,
+                "status": "Pending"
+              }
+      404:
+        description: Order not found
+
+  put:
+    description: Update details of a specific order
+    body:
+      application/json:
+        example: |
+          {
+            "total_amount": 54.98,
+            "status": "Shipped"
+          }
+    responses:
+      200:
+        description: Order updated successfully
+      400:
+        description: Bad request
+      404:
+        description: Order not found
+
+  delete:
+    description: Delete a specific order
+    responses:
+      204:
+        description: Order deleted successfully
+      404:
+        description: Order not found
