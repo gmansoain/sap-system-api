@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Check Out') {
+            steps {
+                git 'https://github.com/gmansoain/sap-system-api.git'
+            }
+        }
+        
+        stage('Build and Publish to Exchange'){
+            steps{
+                sh 'cd /var/jenkins_home/workspace/sap-system-api/sap-system-api && mvn clean deploy'
+            }
+        }
+        
+        stage('Deploy to CH2.0'){
+            steps{
+                sh 'cd /var/jenkins_home/workspace/sap-system-api/sap-system-api && mvn clean deploy -DmuleDeploy -Dusername=gonmule -Dpassword=Scipio235ac! -Dclient_id=6cf41b1f668642ed971f4c9268e440b9 -Dclient_secret=5f10d50bc9EC44F08F51b736Ec837d3D'
+            }
+        }
+}
+}
